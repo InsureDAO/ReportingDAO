@@ -7,6 +7,9 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract ReportingMemberERC20{
     event Transfer(address indexed from, address indexed to, uint256 value);
 
+    event CommitOwnership(address admin);
+    event AcceptOwnership(address admin);
+
 
     mapping(address => uint256) private _balances;
 
@@ -19,7 +22,8 @@ contract ReportingMemberERC20{
     string private _name;
     string private _symbol;
 
-    address admin;
+    address public admin;
+    address public future_admin;
 
     constructor(address admin_, string memory name_, string memory symbol_) {
         admin = admin_;
@@ -47,8 +51,13 @@ contract ReportingMemberERC20{
         return _balances[account];
     }
 
-    function _mint(address account) internal {
+    function mint(address account) external {
         require(msg.sender == admin, "ERC20: mint to the zero address");
+
+        _mint(account);
+    }
+
+    function _mint(address account) internal {
         require(account != address(0), "ERC20: mint to the zero address");
 
         uint256 amount = 1;
@@ -61,7 +70,7 @@ contract ReportingMemberERC20{
         emit Transfer(address(0), account, amount);
     }
 
-    function burn(address account) public {
+    function burn(address account) external {
         if(msg.sender == account){
             _burn(msg.sender);
         }else{
@@ -83,6 +92,28 @@ contract ReportingMemberERC20{
         _totalSupply -= amount;
 
         emit Transfer(account, address(0), amount);
+    }
+
+    function commit_transfer_ownership(address addr)external {
+        /***
+        *@notice Transfer ownership of GaugeController to `addr`
+        *@param addr Address to have ownership transferred to
+        */
+        require (msg.sender == admin, "dev: admin only");
+        future_admin = addr;
+        emit CommitOwnership(addr);
+    }
+
+    function accept_transfer_ownership()external {
+        /***
+        *@notice Accept a transfer of ownership
+        *@return bool success
+        */
+        require(address(msg.sender) == future_admin, "dev: future_admin only");
+
+        admin = future_admin;
+
+        emit AcceptOwnership(admin);
     }
 
 }

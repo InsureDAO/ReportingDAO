@@ -16,6 +16,36 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
+const fs = require("fs");
+const key = fs.readFileSync(".key").toString().trim();
+const infuraKey = fs.readFileSync(".infuraKey").toString().trim();
+
 module.exports = {
-  solidity: "0.8.4",
+  solidity: "0.8.7",
+  defaultNetwork: "hardhat",
+  networks: {
+    hardhat: {
+      initialBaseFeePerGas: 0,
+      //forking: {url: "https://eth-mainnet.alchemyapi.io/v2/-vmufhhPyGeTxZH6ep9q2PuHjaPp4l0u",} //remove comment when testing mainnet fork
+    },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${infuraKey}`,
+      accounts: [`0x${key}`]
+    }
+  },
+  solidity: {
+    version: "0.8.7",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test/",
+    cache: "./cache",
+    artifacts: "./artifacts"
+  }
 };
