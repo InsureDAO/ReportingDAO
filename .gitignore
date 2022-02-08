@@ -6,6 +6,8 @@ typechain
 package-lock.json
 .infuraKey
 .Key
+.env
 #Hardhat files
 cache
 artifacts
+

@@ -1,24 +1,16 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
+require('dotenv').config()
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
-
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
+const { 
+  ETHERSCAN_API,
+  KEY,
+  INFURA_KEY
+ } = process.env
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-const fs = require("fs");
-const key = fs.readFileSync(".key").toString().trim();
-const infuraKey = fs.readFileSync(".infuraKey").toString().trim();
 
 module.exports = {
   solidity: "0.8.7",
@@ -29,9 +21,17 @@ module.exports = {
       //forking: {url: "https://eth-mainnet.alchemyapi.io/v2/-vmufhhPyGeTxZH6ep9q2PuHjaPp4l0u",} //remove comment when testing mainnet fork
     },
     rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${infuraKey}`,
-      accounts: [`0x${key}`]
-    }
+      url: `https://rinkeby.infura.io/v3/${INFURA_KEY}`,
+      accounts: [`0x${KEY}`],
+      gas: 6e6,
+      gasPrice: 1e10,
+      timeout: 2000000000
+    },
+
+    ropsten: {
+      url: `https://ropsten.infura.io/v3/${INFURA_KEY}`,
+      accounts: [`0x${KEY}`]
+    },
   },
   solidity: {
     version: "0.8.7",
@@ -47,5 +47,10 @@ module.exports = {
     tests: "./test/",
     cache: "./cache",
     artifacts: "./artifacts"
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: `${ETHERSCAN_API}`
   }
 };

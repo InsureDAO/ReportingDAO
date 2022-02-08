@@ -25,8 +25,8 @@ contract ReportingMemberERC20{
     address public admin;
     address public future_admin;
 
-    constructor(address admin_, string memory name_, string memory symbol_) {
-        admin = admin_;
+    constructor(string memory name_, string memory symbol_) {
+        admin = msg.sender;
         _name = name_;
         _symbol = symbol_;
     }
@@ -52,7 +52,7 @@ contract ReportingMemberERC20{
     }
 
     function mint(address account) external {
-        require(msg.sender == admin, "ERC20: mint to the zero address");
+        require(msg.sender == admin, "not admin");
 
         _mint(account);
     }
