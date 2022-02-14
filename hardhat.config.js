@@ -13,7 +13,7 @@ const {
  */
 
 module.exports = {
-  solidity: "0.8.7",
+  solidity: "0.8.10",
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
@@ -34,7 +34,7 @@ module.exports = {
     },
   },
   solidity: {
-    version: "0.8.7",
+    version: "0.8.10",
     settings: {
       optimizer: {
         enabled: true,

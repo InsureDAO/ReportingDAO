@@ -1,10 +1,10 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity 0.8.10;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ReportingMemberERC20{
+contract ReportingToken{
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     event CommitOwnership(address admin);
@@ -12,10 +12,7 @@ contract ReportingMemberERC20{
 
 
     mapping(address => uint256) private _balances;
-
     mapping(address => mapping(address => uint256)) private _allowances;
-
-    uint256 public MAX_TOKEN_AMOUNT = 1;
 
     uint256 private _totalSupply;
 
@@ -51,47 +48,32 @@ contract ReportingMemberERC20{
         return _balances[account];
     }
 
-    function mint(address account) external {
-        require(msg.sender == admin, "not admin");
+    function assign(address account)external {
+        require(msg.sender == admin, "onlyOwner");
 
-        _mint(account);
-    }
+        require(account != address(0), "assign to the zero address");
+        require(_balances[account] == 0, "already assigned");
 
-    function _mint(address account) internal {
-        require(account != address(0), "ERC20: mint to the zero address");
-
-        uint256 amount = 1;
-
-        _totalSupply += amount;
-        _balances[account] += amount;
-
-        require(_balances[account] <= MAX_TOKEN_AMOUNT, "exceed MAX_TOKEN_AMOUNT");
-
-        emit Transfer(address(0), account, amount);
-    }
-
-    function burn(address account) external {
-        if(msg.sender == account){
-            _burn(msg.sender);
-        }else{
-            require(msg.sender == admin, "admin only");
-            _burn(account);
-        }
-    }
-
-    function _burn(address account) internal {
-        require(account != address(0), "ERC20: burn from the zero address");
-
-        uint256 amount = 1;
-
-        uint256 accountBalance = _balances[account];
-        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
         unchecked {
-            _balances[account] = accountBalance - amount;
+            _totalSupply += 1;
+            _balances[account] += 1;
         }
-        _totalSupply -= amount;
 
-        emit Transfer(account, address(0), amount);
+        emit Transfer(address(0), account, 1);
+    }
+
+    function resign(address account)external {
+        require(msg.sender == admin || msg.sender == account, "onlyOwner or holder");
+
+        require(account != address(0), "zero address");
+        require(_balances[account] == 1, "not assigned");
+
+        unchecked {
+            _balances[account] -= 1;
+            _totalSupply -= 1;
+        }
+
+        emit Transfer(account, address(0), 1);
     }
 
     function commit_transfer_ownership(address addr)external {
@@ -99,7 +81,7 @@ contract ReportingMemberERC20{
         *@notice Transfer ownership of GaugeController to `addr`
         *@param addr Address to have ownership transferred to
         */
-        require (msg.sender == admin, "dev: admin only");
+        require (msg.sender == admin, "onlyOwner");
         future_admin = addr;
         emit CommitOwnership(addr);
     }
@@ -109,7 +91,7 @@ contract ReportingMemberERC20{
         *@notice Accept a transfer of ownership
         *@return bool success
         */
-        require(address(msg.sender) == future_admin, "dev: future_admin only");
+        require(msg.sender == future_admin, "onlyFutureOwner");
 
         admin = future_admin;
 
