@@ -9,11 +9,9 @@ const fs = require("fs");
 async function main() {
   //config
   const ReportingToken = await hre.ethers.getContractFactory("ReportingToken");
-  const name = "ReportingToken";
-  const symbol = "RPT";
 
   //deploy
-  rpt  = await ReportingToken.deploy(name, symbol);
+  rpt  = await ReportingToken.deploy();
 
   //setup
   await rpt.assign()

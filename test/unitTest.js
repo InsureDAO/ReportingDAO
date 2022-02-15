@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 const { BigNumber } = require("ethers");
 
 describe("ReportingToken", function () {
-  const name = "Reporting Token"
+  const name = "ReportingToken"
   const symbol = "RPT"
   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -13,7 +13,7 @@ describe("ReportingToken", function () {
     const ReportingToken = await ethers.getContractFactory("ReportingToken");
 
     //deploy
-    token = await ReportingToken.deploy(name, symbol);
+    token = await ReportingToken.deploy();
   });
 
   describe("Condition", function () {

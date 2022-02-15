@@ -9,39 +9,36 @@ contract ReportingToken{
 
 
     mapping(address => uint256) private _balances;
-    mapping(address => mapping(address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
 
-    string private _name;
-    string private _symbol;
+    string constant private _name = "ReportingToken";
+    string constant private _symbol = "RPT";
 
     address public admin;
     address public future_admin;
 
-    constructor(string memory name_, string memory symbol_) {
+    constructor() {
         admin = msg.sender;
-        _name = name_;
-        _symbol = symbol_;
     }
 
-    function name() public view returns (string memory) {
+    function name() external pure returns (string memory) {
         return _name;
     }
 
-    function symbol() public view returns (string memory) {
+    function symbol() external pure returns (string memory) {
         return _symbol;
     }
 
-    function decimals() public pure  returns (uint8) {
+    function decimals() external pure  returns (uint8) {
         return 0;
     }
 
-    function totalSupply() public view returns (uint256) {
+    function totalSupply() external view returns (uint256) {
         return _totalSupply;
     }
 
-    function balanceOf(address account) public view returns (uint256) {
+    function balanceOf(address account) external view returns (uint256) {
         return _balances[account];
     }
 
@@ -86,13 +83,13 @@ contract ReportingToken{
     function accept_transfer_ownership()external {
         /***
         *@notice Accept a transfer of ownership
-        *@return bool success
         */
-        require(msg.sender == future_admin, "onlyFutureOwner");
+        address _future_admin = future_admin;
+        require(msg.sender == _future_admin, "onlyFutureOwner");
 
-        admin = future_admin;
+        admin = _future_admin;
 
-        emit AcceptOwnership(admin);
+        emit AcceptOwnership(_future_admin);
     }
 
 }
