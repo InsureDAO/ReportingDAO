@@ -1,9 +1,6 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.10;
 
-import "hardhat/console.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
 contract ReportingToken{
     event Transfer(address indexed from, address indexed to, uint256 value);
 

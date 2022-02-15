@@ -7,27 +7,20 @@ const hre = require("hardhat");
 const fs = require("fs");
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
-
-  // We get the contract to deploy
-  const ReportingMemberERC20 = await hre.ethers.getContractFactory("ReportingMemberERC20");
-
   //config
+  const ReportingToken = await hre.ethers.getContractFactory("ReportingToken");
   const name = "ReportingToken";
-  const simbol = "RPT";
+  const symbol = "RPT";
 
   //deploy
-  rpt_insure  = await ReportingMemberERC20.deploy(name, simbol);
+  rpt  = await ReportingToken.deploy(name, symbol);
 
-  console.log(rpt_insure.address)
+  //setup
+  await rpt.assign()
 
 
-  let text = `ReportingToken = "${rpt_insure.address}"`
+  //write
+  let text = `ReportingToken = "${rpt.address}"`
 
   try {
     fs.writeFileSync("./scripts/deployments.js", text);
